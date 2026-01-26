@@ -22,8 +22,6 @@ export function Login() {
            navigate("/")
            toast.success("Usuário logado com sucesso" )
           
-          
-
         }).catch(()=>{
             toast.error("Usuário ou senha inválidos ")
            setSigned(false)

@@ -50,7 +50,6 @@ function AuthProvider({ children }: AuthProviderData) {
     const [token, setToken] = useState("")
 
     useEffect(() => {
-        let tokens = ""
         getChart()
         onAuthStateChanged(auth, (user) => {
 
@@ -58,11 +57,11 @@ function AuthProvider({ children }: AuthProviderData) {
                 setSigned(true)
                 setLoading(false)
                 const userData = user.toJSON() as UserProps
-                tokens = userData.stsTokenManager.accessToken
+                const tokens = userData.stsTokenManager.accessToken
                 setToken(tokens)
                 checkPing(tokens);
                 console.log(tokens)
-            } else {
+            } else{
                 setSigned(false)
                 setLoading(false)
                 setToken("")
@@ -104,19 +103,17 @@ function AuthProvider({ children }: AuthProviderData) {
             }
     async function checkPing(tokens: string) {
         try {
-            apiTravel.get(`viagem?id=${import.meta.env.VITE_TRAVEL_PING_NUMBER}`,{
+           const response = await apiTravel.get(`viagem?id=${import.meta.env.VITE_TRAVEL_PING_NUMBER}`,{
                 headers:{
                     Authorization: `Bearer ${tokens}`    
                 }
-            })
-                .then(res => res.data)
-                .then(data => {
-                    if (data.error) {
-                        setPing(false);
-                        toast.error("API TACOM OFFLINE!!!")
-                    }
-                })
-           
+            }).then(res => res.data)
+
+            if(response.error){
+                toast.error("API tacon offline")
+                setPing(false)
+                return
+            }
             setPing(true)
         } catch (error) {
             setPing(false)
