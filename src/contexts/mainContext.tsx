@@ -52,15 +52,16 @@ function AuthProvider({ children }: AuthProviderData) {
     useEffect(() => {
         getChart()
         onAuthStateChanged(auth, (user) => {
-
             if (user) {
                 setSigned(true)
                 setLoading(false)
                 const userData = user.toJSON() as UserProps
                 const tokens = userData.stsTokenManager.accessToken
                 setToken(tokens)
-                checkPing(tokens);
+                checkPing(tokens)
                 console.log(tokens)
+                const interval = setInterval(() => checkPing(tokens), 60000);
+                return () => clearInterval(interval)
             } else{
                 setSigned(false)
                 setLoading(false)
@@ -85,6 +86,7 @@ function AuthProvider({ children }: AuthProviderData) {
                 })}
         getLines()
     }, [select])
+
 
       async function getLines() {
                 const docRef = collection(db, "MONITORED_LINES")
@@ -119,6 +121,7 @@ function AuthProvider({ children }: AuthProviderData) {
             setPing(false)
         }
     }
+    
     return (
         <MainContext.Provider value={{ ping, signed, loading, setSigned, setLoading, month, lines, select, setSelect, token }}>
             {children}
