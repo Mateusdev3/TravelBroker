@@ -85,7 +85,7 @@ function AuthProvider({ children }: AuthProviderData) {
                     setMonth(listdocs)
                 })}
         getLines()
-    }, [select])
+    }, [select, ping])
 
 
       async function getLines() {

@@ -16,12 +16,13 @@ export function Login() {
     const {setSigned} = useContext(MainContext)
 
     async function handleSignIn() {
+        
         await signInWithEmailAndPassword(auth, email, password)
         .then(() => {
            setSigned(true)
            navigate("/")
            toast.success("Usuário logado com sucesso" )
-          
+           
         }).catch(()=>{
             toast.error("Usuário ou senha inválidos ")
            setSigned(false)
@@ -51,9 +52,8 @@ export function Login() {
                     change={(e) => setPassword(e.target.value)}
                 />
 
-                <button className="bg-purple-700 rounded-lg w-6/12 h-9 text-white font-medium text-lg hover:scale-105 duration-400 cursor-pointer" onClick={handleSignIn}>
-                    Entrar
-                </button>
+                <button className="bg-purple-700 rounded-lg w-6/12 h-9 text-white font-medium text-lg hover:scale-105 duration-400 cursor-pointer"
+                onClick={handleSignIn}> Entrar </button>
             </div>
         </div>
         </Container>
