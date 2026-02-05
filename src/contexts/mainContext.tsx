@@ -60,8 +60,6 @@ function AuthProvider({ children }: AuthProviderData) {
                 setToken(tokens)
                 checkPing(tokens)
                 console.log(tokens)
-                const interval = setInterval(() => checkPing(tokens), 60000);
-                return () => clearInterval(interval)
             } else{
                 setSigned(false)
                 setLoading(false)
@@ -85,7 +83,7 @@ function AuthProvider({ children }: AuthProviderData) {
                     setMonth(listdocs)
                 })}
         getLines()
-    }, [select, ping])
+    }, [select])
 
 
       async function getLines() {
