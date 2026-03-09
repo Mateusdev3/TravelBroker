@@ -104,7 +104,7 @@ function AuthProvider({ children }: AuthProviderData) {
             }, 3600000)
             return () => clearInterval(interval);
         }
-    }, [signed, token]);
+    }, [token]);
 
     async function getLines() {
         const docRef = collection(db, "MONITORED_LINES")
