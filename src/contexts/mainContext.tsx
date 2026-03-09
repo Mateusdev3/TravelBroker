@@ -67,7 +67,7 @@ function AuthProvider({ children }: AuthProviderData) {
                 const userData = user.toJSON() as UserProps
                 const tokens = userData.stsTokenManager.accessToken
                 setToken(tokens)
-                checkPing(tokens)
+                
                 
                 
             } else{
@@ -96,6 +96,15 @@ function AuthProvider({ children }: AuthProviderData) {
         
     }, [select])
 
+    useEffect(() => {
+        if (signed && token) {
+            checkPing(token); 
+            const interval = setInterval(() => {
+                checkPing(token);
+            }, 60000);
+            return () => clearInterval(interval);
+        }
+    }, [signed, token]);
 
       async function getLines() {
                 const docRef = collection(db, "MONITORED_LINES")
