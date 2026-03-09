@@ -132,6 +132,7 @@ function AuthProvider({ children }: AuthProviderData) {
             if (response.error) {
                 toast.error("API tacon offline")
                 setPing(false)
+                setSigned(false)
                 return
             }
 
