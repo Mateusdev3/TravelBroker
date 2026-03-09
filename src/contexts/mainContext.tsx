@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "../services/firebase/firebaseConection";
 import { apiTravel } from "../services/api/api";
-import { useNavigate } from "react-router";
 
 
 
@@ -22,7 +21,7 @@ type MainContextData = {
     token: string;
     setSigned: (value: boolean) => void
     setLoading: (value: boolean) => void
-     setSelect: (value: string) => void
+    setSelect: (value: string) => void
 }
 interface AmountProps {
     amount: number;
@@ -30,8 +29,8 @@ interface AmountProps {
     datetext: string;
 }
 
-interface UserProps{
-    stsTokenManager:{
+interface UserProps {
+    stsTokenManager: {
         accessToken: string;
     }
 }
@@ -53,30 +52,30 @@ function AuthProvider({ children }: AuthProviderData) {
     const [lines, setLines] = useState<LinesDb[]>([])
     const [select, setSelect] = useState("")
     const [token, setToken] = useState("")
-    const navigate = useNavigate();
 
-     
+
+
 
     useEffect(() => {
         getChart()
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                
+
                 setSigned(true)
                 setLoading(false)
                 const userData = user.toJSON() as UserProps
                 const tokens = userData.stsTokenManager.accessToken
                 setToken(tokens)
-                
-                
-                
-            } else{
+
+
+
+            } else {
                 setSigned(false)
                 setLoading(false)
                 setToken("")
             }
         })
-      
+
 
         async function getChart() {
             const docsRefs = collection(db, "CHART")
@@ -91,60 +90,63 @@ function AuthProvider({ children }: AuthProviderData) {
                         })
                     })
                     setMonth(listdocs)
-                })}
+                })
+        }
         getLines()
-        
+
     }, [select])
 
     useEffect(() => {
         if (signed && token) {
-            checkPing(token); 
+            checkPing(token);
             const interval = setInterval(() => {
                 checkPing(token);
-            }, 60000);
+            }, 3600000)
             return () => clearInterval(interval);
         }
     }, [signed, token]);
 
-      async function getLines() {
-                const docRef = collection(db, "MONITORED_LINES")
-                await getDocs(docRef)
-                .then((snapshot) => {
-                    let listLines = [] as LinesDb[]
-                    snapshot.forEach(doc => {
-                        listLines.push({
-                            rowCode: doc.data().rowCode,
-                            rowLine: doc.data().rowLine,
-                            amount: doc.data().amount
-                        })
+    async function getLines() {
+        const docRef = collection(db, "MONITORED_LINES")
+        await getDocs(docRef)
+            .then((snapshot) => {
+                let listLines = [] as LinesDb[]
+                snapshot.forEach(doc => {
+                    listLines.push({
+                        rowCode: doc.data().rowCode,
+                        rowLine: doc.data().rowLine,
+                        amount: doc.data().amount
                     })
-                    setLines(listLines)
                 })
-            }
+                setLines(listLines)
+            })
+    }
     async function checkPing(tokens: string) {
         try {
-           const response = await apiTravel.get(`viagem?id=${import.meta.env.VITE_TRAVEL_PING_NUMBER}`,{
-                headers:{
-                    Authorization: `Bearer ${tokens}`    
+            const response = await apiTravel.get(`viagem?id=${import.meta.env.VITE_TRAVEL_PING_NUMBER}`, {
+                headers: {
+                    Authorization: `Bearer ${tokens}`
                 }
             }).then(res => res.data)
 
-            if(response.error){
+            if (response.error) {
                 toast.error("API tacon offline")
                 setPing(false)
                 return
             }
-            
+
             setPing(true)
         } catch (error) {
             setPing(false)
-            navigate("/login")
+            setSigned(false)
+
+
 
         }
     }
 
- 
-    
+
+
     return (
         <MainContext.Provider value={{ ping, signed, loading, setSigned, setLoading, month, lines, select, setSelect, token }}>
             {children}
