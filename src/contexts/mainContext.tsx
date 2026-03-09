@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "../services/firebase/firebaseConection";
 import { apiTravel } from "../services/api/api";
+import { useNavigate } from "react-router";
+
 
 
 interface AuthProviderData {
@@ -39,6 +41,9 @@ interface LinesDb {
     rowLine: String;
     amount: String;
 }
+
+
+
 export const MainContext = createContext({} as MainContextData)
 function AuthProvider({ children }: AuthProviderData) {
     const [signed, setSigned] = useState(false)
@@ -48,18 +53,23 @@ function AuthProvider({ children }: AuthProviderData) {
     const [lines, setLines] = useState<LinesDb[]>([])
     const [select, setSelect] = useState("")
     const [token, setToken] = useState("")
+    const navigate = useNavigate();
+
+     
 
     useEffect(() => {
         getChart()
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                
                 setSigned(true)
                 setLoading(false)
                 const userData = user.toJSON() as UserProps
                 const tokens = userData.stsTokenManager.accessToken
                 setToken(tokens)
                 checkPing(tokens)
-                console.log(tokens)
+                
+                
             } else{
                 setSigned(false)
                 setLoading(false)
@@ -83,6 +93,7 @@ function AuthProvider({ children }: AuthProviderData) {
                     setMonth(listdocs)
                 })}
         getLines()
+        
     }, [select])
 
 
@@ -114,11 +125,16 @@ function AuthProvider({ children }: AuthProviderData) {
                 setPing(false)
                 return
             }
+            
             setPing(true)
         } catch (error) {
             setPing(false)
+            navigate("/login")
+
         }
     }
+
+ 
     
     return (
         <MainContext.Provider value={{ ping, signed, loading, setSigned, setLoading, month, lines, select, setSelect, token }}>
