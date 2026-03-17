@@ -60,15 +60,12 @@ function AuthProvider({ children }: AuthProviderData) {
         getChart()
         onAuthStateChanged(auth, (user) => {
             if (user) {
-
+                setToken("")
                 setSigned(true)
                 setLoading(false)
                 const userData = user.toJSON() as UserProps
                 const tokens = userData.stsTokenManager.accessToken
                 setToken(tokens)
-
-
-
             } else {
                 setSigned(false)
                 setLoading(false)
@@ -128,7 +125,7 @@ function AuthProvider({ children }: AuthProviderData) {
                     Authorization: `Bearer ${tokens}`
                 }
             }).then(res => res.data)
-
+           
             if (response.error) {
                 toast.error("API tacon offline")
                 setPing(false)
