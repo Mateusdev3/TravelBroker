@@ -10,4 +10,21 @@ const apiSetTravel = axios.create({
     timeout: 10000,
 })
 
+apiTravel.interceptors.request.use( (config => {
+    const token = localStorage.getItem("@token_TravelBroker")
+    if(token){
+        config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+}))
+
+
+apiSetTravel.interceptors.request.use( (config => {
+    const token = localStorage.getItem("@token_TravelBroker")
+    if(token){
+        config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+}))
+
 export {apiSetTravel, apiTravel}

@@ -164,11 +164,7 @@ export function Broker() {
     console.log(token)
     try {
       const requests = rows.map(r =>
-        apiTravel.get(`viagem?id=${r.tnumber}`, {
-          headers: {
-            Authorization: "Bearer " + token
-          }
-        })
+        apiTravel.get(`viagem?id=${r.tnumber}`)
           .then(res => res.data)
           .catch(() => ({ erro: true }))
       );
@@ -318,11 +314,7 @@ export function Broker() {
     try {
 
       const requests = rows.map(r =>
-        apiTravel.get(`viagem?id=${r.tnumber}`, {
-          headers: {
-            Authorization: "Bearer " + token
-          }
-        })
+        apiTravel.get(`viagem?id=${r.tnumber}`)
           .then(res => res.data)
           .catch(() => "ERRO")
       );
@@ -386,12 +378,8 @@ export function Broker() {
             const response = await apiSetTravel.put("/setviagem", {
               id: rows[i].tnumber,
               date: hourToSend,
-            },
-            { 
-              headers: {
-              Authorization: `Bearer ${token}`
-              }
-            }).then(res => res.data)
+            }
+            ).then(res => res.data)
             tempHours.push(hourToSend)
 
             const monitoredLine = monitored.find(m => m.rowLine === tacomresponse[i].line)

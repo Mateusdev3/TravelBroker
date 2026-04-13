@@ -1,10 +1,12 @@
-import { useState, useEffect, createContext, type ReactNode } from "react";
+import { useState, useEffect, createContext, type ReactNode} from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../services/firebase/firebaseConection"
 import { toast } from "react-toastify";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "../services/firebase/firebaseConection";
 import { apiTravel } from "../services/api/api";
+import { set } from "date-fns";
+
 
 
 
@@ -53,6 +55,8 @@ function AuthProvider({ children }: AuthProviderData) {
     const [select, setSelect] = useState("")
     const [token, setToken] = useState("")
 
+   
+
 
 
 
@@ -65,10 +69,14 @@ function AuthProvider({ children }: AuthProviderData) {
                 setLoading(false)
                 const userData = user.toJSON() as UserProps
                 const tokens = userData.stsTokenManager.accessToken
+                localStorage.setItem("@token_TravelBroker", tokens)
                 setToken(tokens)
+
+               
             } else {
                 setSigned(false)
                 setLoading(false)
+                localStorage.removeItem("@token_TravelBroker")
                 setToken("")
             }
         })
@@ -95,9 +103,9 @@ function AuthProvider({ children }: AuthProviderData) {
 
     useEffect(() => {
         if (signed && token) {
-            checkPing(token);
+            checkPing();
             const interval = setInterval(() => {
-                checkPing(token);
+                checkPing();
             }, 3600000)
             return () => clearInterval(interval);
         }
@@ -118,13 +126,9 @@ function AuthProvider({ children }: AuthProviderData) {
                 setLines(listLines)
             })
     }
-    async function checkPing(tokens: string) {
+    async function checkPing() {
         try {
-            const response = await apiTravel.get(`viagem?id=${import.meta.env.VITE_TRAVEL_PING_NUMBER}`, {
-                headers: {
-                    Authorization: `Bearer ${tokens}`
-                }
-            }).then(res => res.data)
+            const response = await apiTravel.get(`viagem?id=${import.meta.env.VITE_TRAVEL_PING_NUMBER}`).then(res => res.data)
            
             if (response.error) {
                 toast.error("API tacon offline")
