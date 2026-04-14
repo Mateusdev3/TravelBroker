@@ -106,7 +106,7 @@ function AuthProvider({ children }: AuthProviderData) {
             checkPing();
             const interval = setInterval(() => {
                 checkPing();
-            }, 3600000)
+            }, 1800000)
             return () => clearInterval(interval);
         }
     }, [token]);
