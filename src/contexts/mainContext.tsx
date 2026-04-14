@@ -134,6 +134,7 @@ function AuthProvider({ children }: AuthProviderData) {
                 toast.error("API tacon offline")
                 setPing(false)
                 setSigned(false)
+                localStorage.removeItem("@token_TravelBroker")
                 return
             }
 
