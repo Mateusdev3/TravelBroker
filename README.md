@@ -1,172 +1,338 @@
-<div align="center">
-  <h1>Travel Broker</h1>
-  <p><strong>Correção e monitoramento de saídas automáticas de ônibus com inconsistências de horário</strong></p>
+# TravelBroker
 
-  ![React](https://img.shields.io/badge/React-19.2.0-61dafb?style=for-the-badge&logo=react)
-  ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178c6?style=for-the-badge&logo=typescript)
-  ![Vite](https://img.shields.io/badge/Vite-7.2.2-646cff?style=for-the-badge&logo=vite)
-  ![Firebase](https://img.shields.io/badge/Firebase-Firestore%20%26%20Auth-orange?style=for-the-badge&logo=firebase)
-  ![License](https://img.shields.io/badge/License-Private-red?style=for-the-badge)
-</div>
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge\&logo=react\&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge\&logo=typescript\&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge\&logo=vite\&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge\&logo=firebase\&logoColor=black)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38BDF8?style=for-the-badge\&logo=tailwindcss\&logoColor=white)
 
----
+Aplicação web desenvolvida para **validação, correção e monitoramento de viagens de ônibus**, auxiliando na identificação de inconsistências de horário geradas por saídas automáticas e permitindo aplicar correções de forma controlada.
 
-## Resumo
+## Visão geral
 
-Travel Broker é uma aplicação web para identificar e corrigir datas/horários incorretos gerados automaticamente por veículos (ônibus) devido a inconsistências no sistema embarcado. A ferramenta valida saídas informadas, consulta a API de transporte, aplica correções quando cabível e atualiza métricas em Firestore para monitoramento e relatórios.
+O **TravelBroker** foi criado para resolver um problema operacional real relacionado à conferência de viagens no transporte público. A aplicação permite importar uma planilha com viagens, consultar os dados atuais em uma API externa, validar horários, identificar registros inconsistentes e aplicar correções quando necessário.
 
-Principais funcionalidades:
-- Upload e validação de planilhas Excel com viagens.
-- Consulta à API TACOM para obter saídas atuais.
-- Geração automática de horários válidos quando a saída manual é inconsistente.
-- Aplicação de correções via endpoint de atualização.
-- Monitoramento de linhas (contadores) e bloqueio de linhas proibidas.
-- Dashboard com gráficos mensais e por linha.
-- Autenticação via Firebase.
+Além da correção das viagens, o sistema também possui autenticação, dashboard com gráficos, monitoramento de linhas, cadastro de linhas proibidas e controle de calendário MCO para evitar correções indevidas em períodos já processados.
 
----
+## Deploy
 
-## Principais conceitos
+```txt
+https://travel-broker.vercel.app
+```
 
-- Broker: componente responsável por validar e aplicar correções de saída.
-- MCO: calendário de processamento que pode bloquear correções já processadas.
-- MONITORED_LINES: coleções que armazenam linhas sendo monitoradas e seus contadores.
-- PROHIBILE_ROWS: linhas que não devem ser corrigidas automaticamente.
-- CHART: coleção com métricas mensais agregadas.
+## Demonstração
 
----
+### Login
 
-## Tecnologias
+![Tela de login](./docs/screenshots/login.png)
 
-- React, TypeScript, Vite
-- Firebase (Auth + Firestore)
-- Axios para chamadas HTTP
-- read-excel-file para leitura de planilhas
-- Tailwind CSS para UI
-- Chart.js (react-chartjs-2) para gráficos
-- date-fns para manipulação de datas
-- react-toastify para notificações
+### Dashboard de correções
 
----
+![Dashboard de correções](./docs/screenshots/dashboard.png)
 
-## Instalação rápida
+### Cadastros operacionais
 
-1. Clone o repositório e instale dependências:
-   npm install
+![Cadastros operacionais](./docs/screenshots/cadastros.png)
 
-2. Crie um arquivo de ambiente (.env) com as variáveis listadas abaixo (apenas os nomes; não insira valores sensíveis no repositório).
+### Validação de viagens
 
-3. Inicie em modo desenvolvimento:
-   npm run dev
+![Validação de viagens](./docs/screenshots/validacao-viagens.png)
 
----
+## Funcionalidades
 
-## Variáveis de ambiente (apenas nomes)
+* Autenticação de usuários com Firebase Authentication.
+* Proteção de rotas privadas.
+* Upload e leitura de planilhas Excel.
+* Validação de viagens com base em linha, código, horário e operadora.
+* Consulta de informações de viagem em API externa.
+* Identificação de horários inválidos.
+* Aplicação de correções por endpoint dedicado.
+* Geração de horário alternativo quando a saída manual está inconsistente.
+* Controle de linhas monitoradas.
+* Bloqueio de linhas proibidas para impedir correções automáticas.
+* Cadastro e consulta de calendário MCO.
+* Dashboard com gráficos de correções por mês e por linha.
+* Armazenamento de métricas no Firestore.
+* Indicação visual de disponibilidade da API.
+* Notificações de sucesso, erro e alerta para o usuário.
+* Persistência de dados temporários no `localStorage`.
 
-Defina no seu .env (ou no painel de deploy) as variáveis abaixo:
+## Problema que o projeto resolve
 
-- VITE_API_TRAVEL
-- VITE_API_SETTRAVEL
-- VITE_TRAVEL_PING_NUMBER
-- VITE_FIREBASE_API_KEY
-- VITE_FIREBASE_AUTH_DOMAIN
-- VITE_FIREBASE_PROJECT_ID
-- VITE_FIREBASE_STORAGE_BUCKET
-- VITE_FIREBASE_MESSAGING_SENDER_ID
-- VITE_FIREBASE_APP_ID
-- VITE_FIREBASE_MEASUREMENT_ID
+Em operações de transporte, algumas viagens podem apresentar inconsistências de data ou horário por falhas de sincronização, lançamentos incorretos ou comportamento inesperado de sistemas embarcados.
 
-(Não adicione valores sensíveis no repositório público.)
+Corrigir esse tipo de divergência manualmente pode ser demorado, repetitivo e sujeito a erro humano. O **TravelBroker** centraliza esse fluxo em uma interface web, permitindo validar grandes volumes de registros, indicar quais viagens precisam de correção e aplicar as alterações com mais segurança.
 
----
+## Fluxo principal
 
-## Scripts úteis
+1. O usuário faz login na aplicação.
+2. A aplicação verifica se a API externa está disponível.
+3. O usuário acessa a tela de correções.
+4. Uma planilha Excel com viagens é enviada.
+5. O sistema lê os dados da planilha e estrutura as informações.
+6. Para cada viagem, o sistema consulta a API externa.
+7. Os horários são comparados com os dados informados na planilha.
+8. O sistema classifica cada item como `OK`, `HORA INVÁLIDA`, `PROCESSADA` ou bloqueado por regra.
+9. O usuário revisa os dados na tabela.
+10. As correções são aplicadas somente após confirmação.
+11. O Firestore é atualizado com métricas e contadores operacionais.
+12. O dashboard exibe os resultados consolidados.
 
-- npm run dev — servidor de desenvolvimento
-- npm run build — build para produção
-- npm run preview — preview do build
-- npm run lint — lint do projeto
+## Módulos do sistema
 
----
+### Login
 
-## Estrutura principal do projeto
+Tela responsável pela autenticação do usuário. O acesso ao restante do sistema é protegido por rotas privadas.
 
-- src/
-  - components/ — componentes reutilizáveis (charts, container, header, inputs, layout)
-  - contexts/MainContext.tsx — contexto global (token, ping da API, charts, linhas)
-  - pages/
-    - broker/ — upload, validação e aplicação de correções
-    - home/ — dashboard com gráficos
-    - login/ — autenticação
-    - mcocalendary/ — calendário MCO
-    - prohibitedlines/ — gerenciamento de linhas bloqueadas
-    - linesmonitor/ — monitoramento e contadores
-  - routes/privateRoutes.tsx — proteção de rotas
-  - services/
-    - api/ — instância axios e wrappers
-    - firebase/ — conexão Auth e Firestore
-  - main.tsx, router.tsx, index.css
+### Home / Dashboard
 
----
+Tela inicial com gráficos de acompanhamento. Permite alternar entre visualização geral de correções e correções por linhas monitoradas.
 
-## Fluxo de correção (Broker) — visão resumida
+### Correções
 
-1. Usuário faz upload de planilha (.xlsx / .xls).
-2. App lê a planilha e formata linhas (data, código da viagem, linha, horário desejado).
-3. Para cada viagem:
-   - Consulta a API (VITE_API_TRAVEL) para obter dados atuais.
-   - Verifica se a saída manual existe e se a linha está proibida.
-   - Compara horário desejado vs saída manual; se inválido, gera horário alternativo (adiciona 10s ou lógica definida).
-   - Verifica se a viagem já foi processada (MCO).
-4. Se validada, envia atualização para a API de aplicação (VITE_API_SETTRAVEL).
-5. Atualiza Firestore: incrementa contadores em MONITORED_LINES e atualiza CHART (métricas mensais).
-6. Exibe resultados em tabelas (avaliação, antes/depois).
+Módulo principal do sistema. Responsável pelo upload da planilha, validação dos dados, exibição da tabela de viagens e aplicação das correções.
 
-Observações de implementação:
-- Requisições paralelas são feitas com Promise.all para validação.
-- Erros de API são sinalizados para o usuário com toast.
-- Estados críticos são persistidos em localStorage para recuperação de sessão.
+### Cadastros
 
----
+Tela de acesso aos cadastros operacionais do sistema:
 
-## Autenticação e segurança
+* Inserir linha monitorada.
+* Inserir proibição de linha.
+* Inserir calendário MCO.
 
-- Firebase Authentication protege o acesso; rotas são guardadas pelo componente Private.
-- O MainContext armazena o token JWT obtido do usuário e faz ping periódico à API para verificar disponibilidade.
-- Não logue credenciais sensíveis no console em produção.
+### Linhas monitoradas
 
----
+Permite registrar linhas que devem ter suas correções acompanhadas individualmente em contadores no Firestore.
 
-## Firestore — coleções principais
+### Linhas proibidas
 
-- CHART — métricas agregadas por mês (amount, datetext, datedb).
-- MONITORED_LINES — linhas com contadores e metadados (rowCode, rowLine, amount).
-- PROHIBILE_ROWS — linhas bloqueadas para correção.
-- MCO/MM-yyyy/dd-MM/info — registros de processamento diário (processed, dateClosed, hourSeach, totals).
+Permite cadastrar linhas que não devem ser corrigidas automaticamente.
 
----
+### Calendário MCO
 
-## Boas práticas e limites
+Controle usado para validar se determinado período já foi processado, evitando alterações indevidas em registros operacionais fechados.
 
-- Para evitar timeout/instabilidade na API, trate lotes de correção (ex.: 20 viagens por vez).
-- Use retry/backoff para chamadas críticas.
-- Garanta que as colunas da planilha sigam o formato esperado (índice, linha, código, horário original, horário corrigido).
-- Teste com usuários de staging antes de operações em produção.
+## Tecnologias utilizadas
 
----
+* **React**
+* **TypeScript**
+* **Vite**
+* **Tailwind CSS**
+* **Firebase Authentication**
+* **Cloud Firestore**
+* **Axios**
+* **Chart.js**
+* **React Chart.js 2**
+* **React Router DOM**
+* **React Toastify**
+* **React Icons**
+* **read-excel-file**
+* **date-fns**
+* **ESLint**
+* **Vercel**
 
-## Troubleshooting rápido
+## Estrutura do projeto
 
-- API off: verifique VITE_API_TRAVEL, faça ping manual via curl/httpie.
-- Erro na planilha: valide extensão (.xlsx/.xls) e formato de colunas.
-- Viagens marcadas como "PROCESSADA": verifique calendário MCO e timestamps.
-- Porta 5173 ocupada (dev): trocar porta com npm run dev -- --port 3000.
+```txt
+TravelBroker/
+├── public/
+├── src/
+│   ├── components/
+│   │   ├── charts/              # Componentes de gráficos
+│   │   ├── container/           # Container visual das páginas
+│   │   ├── header/              # Cabeçalho e navegação
+│   │   ├── input/               # Inputs reutilizáveis
+│   │   └── layout/              # Layout principal da aplicação
+│   ├── contexts/
+│   │   └── mainContext.tsx      # Contexto global: autenticação, token, API, gráficos e linhas
+│   ├── pages/
+│   │   ├── broker/              # Upload, validação e aplicação de correções
+│   │   ├── home/                # Dashboard com gráficos
+│   │   ├── linesmonitor/        # Cadastro e consulta de linhas monitoradas
+│   │   ├── login/               # Tela de autenticação
+│   │   ├── mcocalendary/        # Calendário MCO
+│   │   ├── prohibitedlines/     # Linhas proibidas
+│   │   └── registrations/       # Menu de cadastros
+│   ├── routes/
+│   │   └── privateRoutes.tsx    # Proteção das rotas privadas
+│   ├── services/
+│   │   ├── api/                 # Configuração das APIs externas
+│   │   └── firebase/            # Configuração do Firebase
+│   ├── index.css
+│   ├── main.tsx
+│   └── router.tsx
+├── index.html
+├── package.json
+├── vite.config.ts
+├── tsconfig.json
+├── vercel.json
+└── README.md
+```
 
----
+## Pré-requisitos
+
+Antes de executar o projeto, tenha instalado:
+
+* Node.js
+* npm ou outro gerenciador de pacotes compatível
+* Projeto Firebase configurado
+* Acesso às APIs externas utilizadas para consulta e correção de viagens
+
+## Como executar localmente
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/Mateusdev3/TravelBroker.git
+```
+
+Acesse a pasta:
+
+```bash
+cd TravelBroker
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+VITE_API_TRAVEL=
+VITE_API_SETTRAVEL=
+VITE_TRAVEL_PING_NUMBER=
+
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_MEASUREMENT_ID=
+```
+
+Execute o projeto:
+
+```bash
+npm run dev
+```
+
+Acesse no navegador:
+
+```txt
+http://localhost:5173
+```
+
+## Scripts disponíveis
+
+```bash
+npm run dev       # Inicia o servidor de desenvolvimento
+npm run build     # Gera a build de produção
+npm run preview   # Executa o preview da build
+npm run lint      # Executa a verificação de lint
+```
+
+## Variáveis de ambiente
+
+| Variável                            | Descrição                                               |
+| ----------------------------------- | ------------------------------------------------------- |
+| `VITE_API_TRAVEL`                   | URL base da API usada para consultar viagens.           |
+| `VITE_API_SETTRAVEL`                | URL base da API usada para aplicar correções.           |
+| `VITE_TRAVEL_PING_NUMBER`           | Identificador usado para testar disponibilidade da API. |
+| `VITE_FIREBASE_API_KEY`             | Chave pública do projeto Firebase.                      |
+| `VITE_FIREBASE_AUTH_DOMAIN`         | Domínio de autenticação do Firebase.                    |
+| `VITE_FIREBASE_PROJECT_ID`          | ID do projeto Firebase.                                 |
+| `VITE_FIREBASE_STORAGE_BUCKET`      | Bucket de armazenamento do Firebase.                    |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | ID de envio de mensagens do Firebase.                   |
+| `VITE_FIREBASE_APP_ID`              | ID da aplicação Firebase.                               |
+| `VITE_FIREBASE_MEASUREMENT_ID`      | ID de medição do Firebase Analytics.                    |
+
+
+## Coleções utilizadas no Firestore
+
+| Coleção           | Finalidade                                          |
+| ----------------- | --------------------------------------------------- |
+| `CHART`           | Armazena métricas mensais de correções realizadas.  |
+| `MONITORED_LINES` | Armazena linhas monitoradas e seus contadores.      |
+| `PROHIBILE_ROWS`  | Armazena linhas proibidas para correção automática. |
+| `MCO`             | Armazena informações de processamento por mês/dia.  |
+
+## Formato esperado da planilha
+
+A planilha importada deve possuir colunas compatíveis com o fluxo de validação da aplicação, contendo informações como:
+
+| Campo        | Descrição                               |
+| ------------ | --------------------------------------- |
+| Data         | Data da viagem.                         |
+| Linha        | Linha operacional.                      |
+| Código       | Código/identificador da viagem.         |
+| Hora início  | Horário original da viagem.             |
+| Veículo      | Identificação do veículo.               |
+| Operadora    | Código da operadora.                    |
+| Hora correta | Horário que deve ser validado/aplicado. |
+
+## Regras de validação
+
+Durante o processamento, a aplicação avalia:
+
+* Se a viagem existe na API externa.
+* Se a linha está cadastrada como proibida.
+* Se a viagem já está processada no calendário MCO.
+* Se o horário informado é válido.
+* Se é necessário gerar um horário alternativo.
+* Se a API de correção respondeu corretamente.
+
+Quando o horário manual é inválido, a aplicação pode gerar um novo horário com base no horário de saída retornado pela API, adicionando um pequeno ajuste de tempo antes de enviar a correção.
+
+## Monitoramento da API
+
+O sistema possui uma verificação periódica de disponibilidade da API externa. Quando a API está indisponível, o usuário é alertado e o acesso operacional pode ser bloqueado para evitar correções em ambiente instável.
+
+## Boas práticas de uso
+
+* Validar a planilha antes de aplicar qualquer correção.
+* Processar lotes menores quando a API estiver instável.
+* Conferir linhas proibidas antes de executar uma correção em massa.
+* Confirmar se o calendário MCO está atualizado.
+* Não expor tokens, URLs internas ou credenciais em repositórios públicos.
+* Utilizar ambiente de homologação antes de aplicar mudanças em produção.
+
+## Objetivo técnico
+
+Este projeto demonstra conhecimentos em:
+
+* Desenvolvimento front-end com React e TypeScript.
+* Construção de SPA com Vite.
+* Autenticação e proteção de rotas.
+* Integração com Firebase Auth e Firestore.
+* Consumo de APIs REST com Axios.
+* Leitura e processamento de planilhas Excel.
+* Manipulação e comparação de datas/horários.
+* Atualização de métricas em banco NoSQL.
+* Criação de dashboards com Chart.js.
+* Organização de contexto global com React Context API.
+* Deploy de aplicação web na Vercel.
+
+## Melhorias futuras
+
+* Criar tela de histórico de correções aplicadas.
+* Adicionar exportação de relatório em Excel ou PDF.
+* Implementar paginação na tabela de validação.
+* Adicionar filtros por data, linha, operadora e status.
+* Criar confirmação dupla para correções em massa.
+* Melhorar responsividade em telas menores.
+* Adicionar testes automatizados para validação de planilhas.
+* Separar regras de negócio em serviços reutilizáveis.
+* Criar logs estruturados de correção.
+* Implementar controle de permissões por perfil de usuário.
+
+## Autor
+
+Desenvolvido por **Mateus Esteves**.
 
 ## Licença
 
-Projeto privado 
-
----
-
+Projeto de uso interno/privado. Caso deseje torná-lo público para reutilização, adicione uma licença adequada ao repositório.
