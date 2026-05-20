@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import readXlsxFile from "read-excel-file";
 import { Container } from "../../components/container";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { addSeconds, differenceInSeconds, format, isAfter, parse } from "date-fns"
+import { addSeconds, differenceInMinutes, differenceInSeconds, format, isAfter, parse } from "date-fns"
 import { useContext } from "react";
 import { MainContext } from "../../contexts/mainContext";
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
@@ -240,17 +240,18 @@ export function Broker() {
 
         const dt = parse(rows[i].datecomplete, "dd/MM/yyyy HH:mm:ss", new Date());
         const da = parse(r.saidaPcManual, "dd/MM/yyyy HH:mm:ss", new Date());
+        const dtini = parse(r.inicioViagem, "dd/MM/yyyy HH:mm:ss", new Date());
+        console.log(dtini)
         console.log("%cSaida manual:%c" + r.saidaPcManual + "%c" + " Viagem: " + "%c" + r.id, "color: #00FF00 ; font-weight: bold", "color: white", "color: #00FF00", "color: white")
         exits.push(da);
         response.push(r);
         const monthdb = format(da, "MM-yyyy");
         const datedb = format(da, "dd-MM");
         const docRef = doc(db, "MCO", monthdb, datedb, "info");
-        const valido = isAfter(dt, da) && differenceInSeconds(dt, da) >= 10;
+        const valido = isAfter(dt, da) && differenceInSeconds(dt, da) >= 10 || differenceInMinutes(da, dtini) >= 20
         resultados.push(valido.toString());
         const snapshot = await getDoc(docRef);
-        console.log(1)
-
+       
 
 
         if (snapshot.exists()) {

@@ -38,9 +38,9 @@ interface UserProps {
 }
 
 interface LinesDb {
-    rowCode: String;
-    rowLine: String;
-    amount: String;
+    rowCode: string;
+    rowLine: string;
+    amount: string;
 }
 
 
@@ -54,11 +54,6 @@ function AuthProvider({ children }: AuthProviderData) {
     const [lines, setLines] = useState<LinesDb[]>([])
     const [select, setSelect] = useState("")
     const [token, setToken] = useState("")
-
-   
-
-
-
 
     useEffect(() => {
         getChart()
@@ -106,6 +101,7 @@ function AuthProvider({ children }: AuthProviderData) {
             checkPing();
             const interval = setInterval(() => {
                 checkPing();
+                localStorage.removeItem("@token_TravelBroker")
             }, 1800000)
             return () => clearInterval(interval);
         }
